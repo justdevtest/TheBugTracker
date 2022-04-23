@@ -21,6 +21,9 @@ namespace TheBugTracker.Models
         [Display(Name = "File Date")]
         public DateTimeOffset Created { get; set; }
 
+        [Display(Name = "File Description")]
+        public string Description { get; set; }
+
         [NotMapped]
         [DataType(DataType.Upload)]
         public IFormFile FormFile { get; set; }
