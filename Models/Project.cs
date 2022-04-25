@@ -14,43 +14,36 @@ namespace TheBugTracker.Models
         public int Id { get; set; }
         
         // Foreign Key
-        public int CompanyId { get; set; }
+        [Display(Name = "Company")]
+        public int? CompanyId { get; set; }
         
         [Required]
+        [StringLength(50)]
         [Display(Name = "Project Name")]
         public string Name { get; set; }
 
         [Display(Name = "Description")]
         public string Description { get; set; }
 
-        [DataType(DataType.Date)]
         [Display(Name = "Start Date")]
         public DateTimeOffset StartDate { get; set; }
 
-        [DataType(DataType.Date)]
         [Display(Name = "End Date")]
         public DateTimeOffset EndDate { get; set; }
 
         [Display(Name = "Project Priority")]
-        public int ProjectPriorityId { get; set; }
-
-        [Display(Name = "File Date")]
-        public DateTimeOffset Created { get; set; }
-
-        [Display(Name = "File Description")]
-        public string FileDescription { get; set; }
+        public int? ProjectPriorityId { get; set; }
 
         [NotMapped]
         [DataType(DataType.Upload)]
-        public IFormFile FormFile { get; set; }
+        public IFormFile ImageFormFile { get; set; }
 
         [Display(Name = "File Name")]
-        public string FileName { get; set; }
-
-        public byte[] FileData { get; set; }
+        public string ImageFileName { get; set; }
+        public byte[] ImageFileData { get; set; }
 
         [Display(Name = "File Extension")]
-        public string FileContentType { get; set; }
+        public string ImageContentType { get; set; }
 
         [Display(Name = "Archived")]
         public bool Archived { get; set; }
@@ -58,8 +51,8 @@ namespace TheBugTracker.Models
         // Navigational Properties
         public virtual Company Company { get; set; }
         public virtual ProjectPriority ProjectPriority { get; set; }
-        public virtual BTUser Members { get; set; }
-        public Ticket Tickets { get; set; }
+        public virtual ICollection<BTUser> Members { get; set; } = new HashSet<BTUser>();
+        public virtual ICollection<Ticket> Tickets { get; set; } = new HashSet<Ticket>();
 
     }
 }
