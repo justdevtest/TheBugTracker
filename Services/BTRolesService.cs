@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TheBugTracker.Data;
 using TheBugTracker.Models;
 using TheBugTracker.Services.Interfaces;
 
@@ -9,6 +11,18 @@ namespace TheBugTracker.Services
 {
     public class BTRolesService : IBTRolesService
     {
+        
+        private readonly ApplicationDbContext _context;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly UserManager<BTUser> _userManager;
+
+        public BTRolesService(ApplicationDbContext context, RoleManager<IdentityRole> roleManager, UserManager<BTUser> userManager)
+        {
+            _context = context;
+            _roleManager = roleManager;
+            _userManager = userManager;
+        }
+
         public Task<bool> AddUserToRoleAsync(BTUser user, string roleName)
         {
             throw new NotImplementedException();
