@@ -35,9 +35,11 @@ namespace TheBugTracker.Services
             throw new NotImplementedException();
         }
 
-        public Task ArchiveProjectAsync(Project project)
+        public async Task ArchiveProjectAsync(Project project)
         {
-            throw new NotImplementedException();
+            project.Archived = true;
+            _context.Update(project);
+            await _context.SaveChangesAsync();
         }
 
         public Task<List<BTUser>> GetAllProjectMembersExceptPMAsync(int projectId)
