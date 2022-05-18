@@ -24,7 +24,7 @@ namespace TheBugTracker.Services
             await _context.SaveChangesAsync();
         }
 
-        public Task<bool> AddProjectManagerAsync(string userId, int projectId)
+        public async Task<bool> AddProjectManagerAsync(string userId, int projectId)
         {
             throw new NotImplementedException();
         }
@@ -119,9 +119,10 @@ namespace TheBugTracker.Services
             throw new NotImplementedException();
         }
 
-        public Task UpdateProjectAsync(Project project)
+        public async Task UpdateProjectAsync(Project project)
         {
-            throw new NotImplementedException();
+            _context.Update(project);
+            await _context.SaveChangesAsync();
         }
     }
 }
