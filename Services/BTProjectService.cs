@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -64,9 +65,14 @@ namespace TheBugTracker.Services
             throw new NotImplementedException();
         }
 
-        public Task<Project> GetProjectByIdAsync(int projectId, int companyId)
+        public async Task<Project> GetProjectByIdAsync(int projectId, int companyId)
         {
-            throw new NotImplementedException();
+            Project project = await _context.Projects
+                                            .Include(p => p.Tickets)
+                                            .Include(p => p.Members)
+                                            .Include(p => p.ProjectPriority)
+                                            .FirstOrDefaultAsync(p => p.Id == projectId && p.CompanyId == companyId);
+            return project;
         }
 
         public Task<BTUser> GetProjectManagerAsync(int projectId)
