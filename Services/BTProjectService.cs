@@ -41,7 +41,7 @@ namespace TheBugTracker.Services
                 }
                 catch(Exception ex)
                 {
-                    Console.WriteLine($"***** Error ***** removing current PM - {ex.Message}");
+                    Console.WriteLine($"***** Error ***** - Error Removing Current Project Manager - {ex.Message}");
                     return false;
                 }
             }
@@ -54,7 +54,7 @@ namespace TheBugTracker.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"***** Error ***** adding new PM - {ex.Message}");
+                Console.WriteLine($"***** Error ***** - Error Adding New Project Manager - {ex.Message}");
                 return false;
             }
         }
