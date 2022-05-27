@@ -14,12 +14,12 @@ namespace TheBugTracker.Services
     {
 
         private readonly ApplicationDbContext _context;
-        private readonly IBTRolesService _roleService;
+        private readonly IBTRolesService _rolesService;
 
-        public BTProjectService(ApplicationDbContext context, IBTRolesService roleService)
+        public BTProjectService(ApplicationDbContext context, IBTRolesService rolesService)
         {
             _context = context;
-            _roleService = roleService;
+            _rolesService = rolesService;
         }
 
         public async Task AddNewProjectAsync(Project project)
@@ -176,7 +176,7 @@ namespace TheBugTracker.Services
             
             foreach (BTUser member in project?.Members)
             {
-                if (await _roleService.IsUserInRoleAsync(member, Roles.ProjectManager.ToString()))
+                if (await _rolesService.IsUserInRoleAsync(member, Roles.ProjectManager.ToString()))
                 {
                     return member;
                 }
@@ -194,7 +194,7 @@ namespace TheBugTracker.Services
 
             foreach (var user in project.Members)
             {
-                if (await _roleService.IsUserInRoleAsync(user, role))
+                if (await _rolesService.IsUserInRoleAsync(user, role))
                 {
                     members.Add(user);
                 }
@@ -281,7 +281,7 @@ namespace TheBugTracker.Services
             {
                 foreach(BTUser member in project?.Members)
                 {
-                    if (await _roleService.IsUserInRoleAsync(member, Roles.ProjectManager.ToString()))
+                    if (await _rolesService.IsUserInRoleAsync(member, Roles.ProjectManager.ToString()))
                     {
                         await RemoveUserFromProjectAsync(member.Id, projectId);
                     }
