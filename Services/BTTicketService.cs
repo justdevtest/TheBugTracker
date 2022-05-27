@@ -28,9 +28,11 @@ namespace TheBugTracker.Services
             await _context.SaveChangesAsync();
         }
 
-        public Task ArchiveTicketAsync(Ticket ticket)
+        public async Task ArchiveTicketAsync(Ticket ticket)
         {
-            throw new NotImplementedException();
+            ticket.Archived = true;
+            _context.Update(ticket);
+            await _context.SaveChangesAsync();
         }
 
         public Task AssignTicketAsync(int ticketId, string userId)
@@ -85,6 +87,7 @@ namespace TheBugTracker.Services
 
         public async Task<Ticket> GetTicketByIdAsync(int ticketId)
         {
+            // FirstOrDefaultAsync() will return an empty ticket object instead of NULL
             return await _context.Tickets.FirstOrDefaultAsync(t => t.Id == ticketId);
         }
 
