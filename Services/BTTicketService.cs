@@ -40,9 +40,30 @@ namespace TheBugTracker.Services
             throw new NotImplementedException();
         }
 
-        public Task<List<Ticket>> GetAllTicketsByCompanyAsync(int companyId)
+        public async Task<List<Ticket>> GetAllTicketsByCompanyAsync(int companyId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                List<Ticket> tickets = await _context.Projects
+                                                     .Where(p => p.CompanyId == companyId)
+                                                     .SelectMany(p => p.Tickets)
+                                                        .Include(t => t.Attachments)
+                                                        .Include(t => t.Comments)
+                                                        .Include(t => t.History)
+                                                        .Include(t => t.DeveloperUser)
+                                                        .Include(t => t.OwnerUser)
+                                                        .Include(t => t.TicketPriority)
+                                                        .Include(t => t.TicketStatus)
+                                                        .Include(t => t.TicketType)
+                                                        .Include(t => t.Project)
+                                                    .ToListAsync();
+                return tickets;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         public Task<List<Ticket>> GetAllTicketsByPriorityAsync(int companyId, string priorityName)
@@ -113,7 +134,7 @@ namespace TheBugTracker.Services
                 TicketPriority priority = await _context.TicketPriorities.FirstOrDefaultAsync(p => p.Name == priorityName);
                 return priority?.Id;
             }
-            catch
+            catch (Exception)
             {
                 throw;
             }
@@ -126,7 +147,7 @@ namespace TheBugTracker.Services
                 TicketStatus status = await _context.TicketStatuses.FirstOrDefaultAsync(s => s.Status == statusName);
                 return status?.Id;
             }
-            catch
+            catch (Exception)
             {
                 throw;
             }
@@ -139,7 +160,7 @@ namespace TheBugTracker.Services
                 TicketType type = await _context.TicketTypes.FirstOrDefaultAsync(t => t.Name == typeName);
                 return type?.Id;
             }
-            catch
+            catch (Exception)
             {
                 throw;
             }
