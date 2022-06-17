@@ -392,7 +392,7 @@ namespace TheBugTracker.Services
         {
             try
             {
-                TicketStatus status = await _context.TicketStatuses.FirstOrDefaultAsync(s => s.Status == statusName);
+                TicketStatus status = await _context.TicketStatuses.FirstOrDefaultAsync(s => s.Name == statusName);
                 return status?.Id;
             }
             catch (Exception)

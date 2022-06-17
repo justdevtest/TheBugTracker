@@ -11,6 +11,6 @@ namespace TheBugTracker.Models
         public int Id { get; set; }
 
         [Display(Name = "Status Name")]
-        public string Status { get; set; }
+        public string Name { get; set; }
     }
 }

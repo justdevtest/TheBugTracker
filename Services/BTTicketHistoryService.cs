@@ -19,7 +19,7 @@ namespace TheBugTracker.Services
 
         public async Task AddHistoryAsync(Ticket oldTicket, Ticket newTicket, string userId)
         {
-            // New Ticket has been added
+            // New Ticket Has Been Added
             if (oldTicket == null && newTicket != null)
             {
                 // Instantiate and access the Ticket History properties "in-line"
@@ -47,7 +47,73 @@ namespace TheBugTracker.Services
             }
             else
             {
+                // Check Ticket Title
+                if (oldTicket.Title != newTicket.Title)
+                {
+                    TicketHistory history = new()
+                    {
+                        TicketId = newTicket.Id,
+                        Property = "Title",
+                        OldValue = oldTicket.Title,
+                        NewValue = newTicket.Title,
+                        Created = DateTimeOffset.Now,
+                        UserId = userId,
+                        Description = $"New ticket title: {newTicket.Title}"
+                    };
 
+                    await _context.TicketHistories.AddAsync(history);
+                }
+
+                // Check Ticket Description
+                if (oldTicket.Description != newTicket.Description)
+                {
+                    TicketHistory history = new()
+                    {
+                        TicketId = newTicket.Id,
+                        Property = "Description",
+                        OldValue = oldTicket.Description,
+                        NewValue = newTicket.Description,
+                        Created = DateTimeOffset.Now,
+                        UserId = userId,
+                        Description = $"New ticket description: {newTicket.Description}"
+                    };
+
+                    await _context.TicketHistories.AddAsync(history);
+                }
+
+                // Check Ticket Priority
+                if (oldTicket.TicketPriorityId != newTicket.TicketPriorityId)
+                {
+                    TicketHistory history = new()
+                    {
+                        TicketId = newTicket.Id,
+                        Property = "TicketPriority",
+                        OldValue = oldTicket.TicketPriority.Name,
+                        NewValue = newTicket.TicketPriority.Name,
+                        Created = DateTimeOffset.Now,
+                        UserId = userId,
+                        Description = $"New ticket priority: {newTicket.TicketPriority.Name}"
+                    };
+
+                    await _context.TicketHistories.AddAsync(history);
+                }
+
+                // Check Ticket Priority
+                if (oldTicket.TicketStatusId != newTicket.TicketStatusId)
+                {
+                    TicketHistory history = new()
+                    {
+                        TicketId = newTicket.Id,
+                        Property = "TicketStatus",
+                        OldValue = oldTicket.TicketStatus.Name,
+                        NewValue = newTicket.TicketStatus.Name,
+                        Created = DateTimeOffset.Now,
+                        UserId = userId,
+                        Description = $"New ticket status: {newTicket.TicketStatus.Name}"
+                    };
+
+                    await _context.TicketHistories.AddAsync(history);
+                }
             }
         }
 
