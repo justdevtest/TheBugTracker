@@ -98,7 +98,7 @@ namespace TheBugTracker.Services
                     await _context.TicketHistories.AddAsync(history);
                 }
 
-                // Check Ticket Priority
+                // Check Ticket Status
                 if (oldTicket.TicketStatusId != newTicket.TicketStatusId)
                 {
                     TicketHistory history = new()
@@ -110,6 +110,40 @@ namespace TheBugTracker.Services
                         Created = DateTimeOffset.Now,
                         UserId = userId,
                         Description = $"New ticket status: {newTicket.TicketStatus.Name}"
+                    };
+
+                    await _context.TicketHistories.AddAsync(history);
+                }
+
+                // Check Ticket Type
+                if (oldTicket.TicketTypeId != newTicket.TicketTypeId)
+                {
+                    TicketHistory history = new()
+                    {
+                        TicketId = newTicket.Id,
+                        Property = "TicketType",
+                        OldValue = oldTicket.TicketType.Name,
+                        NewValue = newTicket.TicketType.Name,
+                        Created = DateTimeOffset.Now,
+                        UserId = userId,
+                        Description = $"New ticket type: {newTicket.TicketType.Name}"
+                    };
+
+                    await _context.TicketHistories.AddAsync(history);
+                }
+
+                // Check Ticket Developer
+                if (oldTicket.DeveloperUserId != newTicket.DeveloperUserId)
+                {
+                    TicketHistory history = new()
+                    {
+                        TicketId = newTicket.Id,
+                        Property = "Developer",
+                        OldValue = oldTicket.DeveloperUser?.FullName ?? "Not Assigned",
+                        NewValue = newTicket.DeveloperUser?.FullName,
+                        Created = DateTimeOffset.Now,
+                        UserId = userId,
+                        Description = $"New ticket developer: {newTicket.DeveloperUser.FullName}"
                     };
 
                     await _context.TicketHistories.AddAsync(history);
