@@ -148,6 +148,17 @@ namespace TheBugTracker.Services
 
                     await _context.TicketHistories.AddAsync(history);
                 }
+
+                try
+                {
+                    // Save the TicketHistories DbSet to Database
+                    await _context.SaveChangesAsync();
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
             }
         }
 
