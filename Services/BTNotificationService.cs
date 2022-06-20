@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity.UI.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TheBugTracker.Data;
 using TheBugTracker.Models;
 using TheBugTracker.Services.Interfaces;
 
@@ -9,6 +11,17 @@ namespace TheBugTracker.Services
 {
     public class BTNotificationService : IBTNotificationService
     {
+        private readonly ApplicationDbContext _context;
+        private readonly IEmailSender _emailSender;
+        private readonly IBTRolesService _roleService;
+
+        public BTNotificationService(ApplicationDbContext context, IEmailSender emailSender, IBTRolesService roleService)
+        {
+            _context = context;
+            _emailSender = emailSender;
+            _roleService = roleService;
+        }
+
         public Task AddNotificationAsync(Notification notification)
         {
             throw new NotImplementedException();
