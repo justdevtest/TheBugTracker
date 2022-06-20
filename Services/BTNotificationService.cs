@@ -34,7 +34,7 @@ namespace TheBugTracker.Services
             {
 
                 throw;
-            }            
+            }
         }
 
         public async Task<List<Notification>> GetReceivedNotificationAsync(string userId)
