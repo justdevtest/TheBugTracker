@@ -75,7 +75,7 @@ namespace TheBugTracker.Services
             }
         }
 
-        public async Task<bool> SendEmailNotification(Notification notification, string emailSubject)
+        public async Task<bool> SendEmailNotificationAsync(Notification notification, string emailSubject)
         {
             BTUser bTUser = await _context.Users.FirstOrDefaultAsync(u => u.Id == notification.RecipientId);
 
@@ -103,9 +103,24 @@ namespace TheBugTracker.Services
 
         }
 
-        public Task SendEmailNotificationByRoleAsync(Notification notification, int companyId, string role)
+        public async Task SendEmailNotificationByRoleAsync(Notification notification, int companyId, string role)
         {
-            throw new NotImplementedException();
+            try
+            {
+                List<BTUser> members = await _roleService.GetUsersInRoleAsync(role, companyId);
+
+                foreach (BTUser bTUser in members)
+                {
+                    notification.RecipientId = bTUser.Id;
+                    await SendEmailNotificationAsync(notification, notification.Title);
+                }
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         public Task SendMembersEmailNotificationsAsync(Notification notification, List<BTUser> members)
