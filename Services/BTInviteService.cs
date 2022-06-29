@@ -26,8 +26,20 @@ namespace TheBugTracker.Services
             {
                 return false;
             }
-            
 
+            try
+            {
+                invite.IsValid = false;
+                invite.InviteeId = userId;
+                invite.CompanyId = companyId;
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         public Task<bool> AddInviteAsync(Guid token, string email, int companyId)
