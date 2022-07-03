@@ -32,13 +32,13 @@ namespace TheBugTracker.Services
             {
                 // Create the stream to store the file
                 MemoryStream memoryStream = new();
-                
+
                 // Copy the file data to the stream
                 await file.CopyToAsync(memoryStream);
-                
+
                 // Convert to byte array
                 byte[] byteFile = memoryStream.ToArray();
-                
+
                 //Clean up memory stream (deliberately)
                 memoryStream.Close();
                 memoryStream.Dispose();
@@ -54,7 +54,15 @@ namespace TheBugTracker.Services
 
         public string FormatFileSize(long bytes)
         {
-            throw new NotImplementedException();
+            int counter = 0;
+            decimal fileSize = bytes;
+
+            while (Math.Round(fileSize / 1024) >= 1)
+            {
+                fileSize /= bytes;
+                counter++;
+            }
+            return string.Format("{0:n1},{1}", fileSize, suffixes[counter]);
         }
 
         public string GetFileIcon(string file)
