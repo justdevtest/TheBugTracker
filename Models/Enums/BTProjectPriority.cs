@@ -7,7 +7,7 @@ namespace TheBugTracker.Models.Enums
 {
     public enum BTProjectPriority
     {
-        Log,
+        Low,
         Medium,
         High,
         Urgent
