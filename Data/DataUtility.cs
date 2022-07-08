@@ -54,7 +54,7 @@ namespace TheBugTracker.Data
         {
             using var svcScope = host.Services.CreateScope();
             var svcProvider = svcScope.ServiceProvider;
-            //Service: An instance of RoleManager
+            //Service: An instance of DbContext
             var dbContextSvc = svcProvider.GetRequiredService<ApplicationDbContext>();
             //Service: An instance of RoleManager
             var roleManagerSvc = svcProvider.GetRequiredService<RoleManager<IdentityRole>>();
