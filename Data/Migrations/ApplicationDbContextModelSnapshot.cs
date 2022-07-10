@@ -611,7 +611,7 @@ namespace TheBugTracker.Data.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<string>("Status")
+                    b.Property<string>("Name")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -712,7 +712,7 @@ namespace TheBugTracker.Data.Migrations
             modelBuilder.Entity("TheBugTracker.Models.Invite", b =>
                 {
                     b.HasOne("TheBugTracker.Models.Company", "Company")
-                        .WithMany()
+                        .WithMany("Invites")
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -882,6 +882,8 @@ namespace TheBugTracker.Data.Migrations
 
             modelBuilder.Entity("TheBugTracker.Models.Company", b =>
                 {
+                    b.Navigation("Invites");
+
                     b.Navigation("Members");
 
                     b.Navigation("Projects");

@@ -10,8 +10,8 @@ using TheBugTracker.Data;
 namespace TheBugTracker.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220504025454_Data Models")]
-    partial class DataModels
+    [Migration("20220710043836_DbModel_002")]
+    partial class DbModel_002
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -613,7 +613,7 @@ namespace TheBugTracker.Data.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<string>("Status")
+                    b.Property<string>("Name")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -714,7 +714,7 @@ namespace TheBugTracker.Data.Migrations
             modelBuilder.Entity("TheBugTracker.Models.Invite", b =>
                 {
                     b.HasOne("TheBugTracker.Models.Company", "Company")
-                        .WithMany()
+                        .WithMany("Invites")
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -884,6 +884,8 @@ namespace TheBugTracker.Data.Migrations
 
             modelBuilder.Entity("TheBugTracker.Models.Company", b =>
                 {
+                    b.Navigation("Invites");
+
                     b.Navigation("Members");
 
                     b.Navigation("Projects");
