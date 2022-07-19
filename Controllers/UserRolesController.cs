@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,17 +35,23 @@ namespace TheBugTracker.Controllers
             List<BTUser> users = await _companyInfoService.GetAllMembersAsync(companyId);
 
             // Loop over the users to populate the ViewModel
-
-            // - use _rolesService
-            // - create multi-select list
             foreach(BTUser user in users)
             {
                 // - instantiate ViewModel
                 ManageUserRolesViewModel viewModel = new();
+                viewModel.BTUser = user;
+
+                // - use _rolesService
+                IEnumerable<string> selected = await _rolesService.GetUserRolesAsync(user);
+
+                // - create multi-select list
+                viewModel.Roles = new MultiSelectList(await _rolesService.GetRolesAsync(), "Name", "Name", selected);
+
+                model.Add(viewModel);
             }
-            
+
             // Return model to the view
-            return View();
+            return View(model);
         }
     }
 }
