@@ -23,6 +23,7 @@ namespace TheBugTracker.Controllers
             _companyInfoService = companyInfoService;
         }
 
+        [HttpGet]
         public async Task<IActionResult> ManageUserRoles()
         {
             // Add instance of the ViewModel as a List (model)
