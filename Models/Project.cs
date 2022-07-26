@@ -31,7 +31,7 @@ namespace TheBugTracker.Models
         [Display(Name = "End Date")]
         public DateTimeOffset EndDate { get; set; }
 
-        [Display(Name = "Project Priority")]
+        [Display(Name = "Priority")]
         public int? ProjectPriorityId { get; set; }
 
         [NotMapped]
