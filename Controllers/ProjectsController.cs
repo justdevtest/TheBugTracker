@@ -90,6 +90,7 @@ namespace TheBugTracker.Controllers
 
                 try
                 {
+                    // Add Image
                     if(model.Project.ImageFormFile != null)
                     {
                         model.Project.ImageFileData = await _fileService.ConvertFileToByteArrayAsync(model.Project.ImageFormFile);
@@ -99,6 +100,12 @@ namespace TheBugTracker.Controllers
 
                     model.Project.CompanyId = companyId;
                     await _projectService.AddNewProjectAsync(model.Project);
+
+                    // Add Project Manager
+                    if (!string.IsNullOrEmpty(model.PmId))
+                    {
+                        await _projectService.AddUserToProjectAsync(model.PmId, model.Project.Id);
+                    }
                 }
                 catch (Exception)
                 {
