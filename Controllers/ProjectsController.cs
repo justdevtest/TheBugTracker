@@ -70,7 +70,7 @@ namespace TheBugTracker.Controllers
             // Add ViewModel Instance
             AddProjectWithPMViewModel model = new();
 
-            // Load SelectList's with Data ie. PmList PriorityList
+            // Load SelectList's With Data ie. PmList PriorityList
             model.PmList = new SelectList(await _rolesService.GetUsersInRoleAsync(Roles.ProjectManager.ToString(), companyId), "Id", "FullName");
             model.PriorityList = new SelectList(await _lookupService.GetProjectPrioritiesAsync(), "Id", "Name");
 
@@ -99,12 +99,13 @@ namespace TheBugTracker.Controllers
                     }
 
                     model.Project.CompanyId = companyId;
+                    // Project Id Gets Assigned Here
                     await _projectService.AddNewProjectAsync(model.Project);
 
                     // Add Project Manager
                     if (!string.IsNullOrEmpty(model.PmId))
                     {
-                        await _projectService.AddUserToProjectAsync(model.PmId, model.Project.Id);
+                        await _projectService.AddProjectManagerAsync(model.PmId, model.Project.Id);
                     }
                 }
                 catch (Exception)
@@ -112,6 +113,9 @@ namespace TheBugTracker.Controllers
 
                     throw;
                 }
+                
+                // ToDo: Redirect To All Projects
+                return RedirectToAction("Index");
             }
 
             return RedirectToAction("Create");
