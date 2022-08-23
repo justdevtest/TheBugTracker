@@ -94,9 +94,24 @@ namespace TheBugTracker.Services
 
         public async Task ArchiveProjectAsync(Project project)
         {
-            project.Archived = true;
-            _context.Update(project);
-            await _context.SaveChangesAsync();
+            try
+            {
+                project.Archived = true;
+                await UpdateProjectAsync(project);
+
+                // Archive the Tickets associated with Project
+                foreach (Ticket ticket in project.Tickets)
+                {
+                    ticket.ArchivedByProject = true;
+                    _context.Update(ticket);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         public async Task<List<BTUser>> GetAllProjectMembersExceptPMAsync(int projectId)
@@ -346,6 +361,11 @@ namespace TheBugTracker.Services
                 Console.WriteLine($"***** Error ***** - Error Removing Users from Project ---> {ex.Message}");
                 throw;
             }
+        }
+
+        public Task RestoreProjectAsync(Project project)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task UpdateProjectAsync(Project project)
