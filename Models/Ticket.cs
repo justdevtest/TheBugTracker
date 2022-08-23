@@ -30,6 +30,13 @@ namespace TheBugTracker.Models
 
         [Display(Name = "Archived")]
         public bool Archived { get; set; }
+        
+        // Added new property after db migration
+        // Must update the database to match
+        //// 1. add-migration "name"
+        //// 2. update-database
+        [Display(Name = "Archived By Project")]
+        public bool ArchivedByProject { get; set; }
 
         // Foreign Keys
         [Display(Name = "Project")]
