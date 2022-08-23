@@ -363,9 +363,26 @@ namespace TheBugTracker.Services
             }
         }
 
-        public Task RestoreProjectAsync(Project project)
+        public async Task RestoreProjectAsync(Project project)
         {
-            throw new NotImplementedException();
+            try
+            {
+                project.Archived = false;
+                await UpdateProjectAsync(project);
+
+                // Archive the Tickets associated with Project
+                foreach (Ticket ticket in project.Tickets)
+                {
+                    ticket.ArchivedByProject = false;
+                    _context.Update(ticket);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         public async Task UpdateProjectAsync(Project project)
