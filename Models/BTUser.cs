@@ -24,7 +24,7 @@ namespace TheBugTracker.Models
         public string FullName { get { return $"{FirstName} {LastName}"; } }
 
         [Display(Name = "Company Id")]
-        public int? CompanyId { get; set; }
+        public int CompanyId { get; set; }
 
         [NotMapped]
         [DataType(DataType.Upload)]
