@@ -38,6 +38,15 @@ namespace TheBugTracker.Controllers
             return View(await applicationDbContext.ToListAsync());
         }
 
+        public async Task<IActionResult> MyTickets()
+        {
+            BTUser bTUser = await _userManager.GetUserAsync(User);
+
+            List<Ticket> tickets = await _ticketService.GetTicketsByUserIdAsync(bTUser.Id, bTUser.CompanyId);
+
+            return View(tickets);
+        }
+
         // GET: Tickets/Details/5
         public async Task<IActionResult> Details(int? id)
         {
