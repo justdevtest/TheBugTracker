@@ -32,7 +32,7 @@
                                 <div class="progress">
 
                                     @*Progress bar logic*@
-                                    @{ 
+                                    @{
                                         var start = Model.Project.StartDate.DateTime;
                                         var end = Model.Project.EndDate.DateTime;
                                         var today = DateTime.Now;
@@ -71,6 +71,23 @@
                             <div class="card-body" style="overflow-y:auto;height:600px;">
 
                                 @*Form and Logic for authorized users to add comments*@
+
+                                <form class="form-horizontal form-bordered" asp-action="AddTicketComment" asp-controller="Tickets" method="post">
+                                    <input type="hidden" asp-for="Id" name="TicketId" />
+                                    @if (Model.DeveloperUserId == bTUser.Id || Model.OwnerUserId == bTUser.Id || projectManager?.Id == bTUser.Id || User.IsInRole("Admin"))
+                                    {
+                                        <div class="form-group">
+                                            <textarea asp-for="@(new TicketComment().Comment)" rows="8" class="form-control" required placeholder="Add comment ..."></textarea>
+                                        </div>
+                                        <button class="btn btn-sm btn-primary">Submit</button>
+                                    }
+                                    else
+                                    {
+                                        <div class="form-group">
+                                            <textarea disabled asp-for="@(new TicketComment().Comment)" rows="8" class="form-control" required placeholder="Add comment ..."></textarea>
+                                        </div>
+                                    }
+                                </form>
 
                                 <hr />
 
