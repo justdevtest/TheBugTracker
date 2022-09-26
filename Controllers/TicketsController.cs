@@ -50,9 +50,9 @@ namespace TheBugTracker.Controllers
         public async Task<IActionResult> AllTickets()
         {
             int companyId = User.Identity.GetCompanyId().Value;
-            
+
             List<Ticket> tickets = await _ticketService.GetAllTicketsByCompanyAsync(companyId);
-            
+
             if (User.IsInRole(nameof(Roles.Developer)) || User.IsInRole(nameof(Roles.Submitter)))
             {
                 return View(tickets.Where(t => t.Archived == false));
@@ -162,7 +162,7 @@ namespace TheBugTracker.Controllers
                 return NotFound();
             }
 
-            ViewData["TicketPriorityId"] = new SelectList(await _lookupService.GetTicketPrioritiesAsync(),"Id", "Name", ticket.TicketPriorityId);
+            ViewData["TicketPriorityId"] = new SelectList(await _lookupService.GetTicketPrioritiesAsync(), "Id", "Name", ticket.TicketPriorityId);
             ViewData["TicketStatusId"] = new SelectList(await _lookupService.GetTicketStatusesAsync(), "Id", "Name", ticket.TicketStatusId);
             ViewData["TicketTypeId"] = new SelectList(await _lookupService.GetTicketTypesAsync(), "Id", "Name", ticket.TicketTypeId);
 
@@ -184,7 +184,7 @@ namespace TheBugTracker.Controllers
             if (ModelState.IsValid)
             {
                 BTUser btUser = await _userManager.GetUserAsync(User);
-                
+
                 try
                 {
                     ticket.Updated = DateTimeOffset.Now;
@@ -210,8 +210,31 @@ namespace TheBugTracker.Controllers
             ViewData["TicketPriorityId"] = new SelectList(await _lookupService.GetTicketPrioritiesAsync(), "Id", "Name", ticket.TicketPriorityId);
             ViewData["TicketStatusId"] = new SelectList(await _lookupService.GetTicketStatusesAsync(), "Id", "Name", ticket.TicketStatusId);
             ViewData["TicketTypeId"] = new SelectList(await _lookupService.GetTicketTypesAsync(), "Id", "Name", ticket.TicketTypeId);
-            
+
             return View(ticket);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddTicketComment([Bind("Id,TicketId,Comment")] TicketComment ticketComment)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    ticketComment.UserId = _userManager.GetUserId(User);
+                    ticketComment.Created = DateTimeOffset.Now;
+
+                    await _ticketService.AddTicketCommentAsync(ticketComment);
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+            }
+
+            return RedirectToAction("Details", new { id = ticketComment.TicketId})
         }
 
         // GET: Tickets/Archive/5
