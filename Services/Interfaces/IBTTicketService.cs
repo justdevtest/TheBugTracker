@@ -14,6 +14,7 @@ namespace TheBugTracker.Services.Interfaces
         public Task AddTicketCommentAsync(TicketComment ticketComment);
         public Task UpdateTicketAsync(Ticket ticket);
         public Task<Ticket> GetTicketByIdAsync(int ticketId);
+        public Task<TicketAttachment> GetTicketAttachmentByIdAsync(int ticketAttachmentId);
         public Task ArchiveTicketAsync(Ticket ticket);
 
         public Task AssignTicketAsync(int ticketId, string userId);

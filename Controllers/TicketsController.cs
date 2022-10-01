@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
@@ -269,6 +270,17 @@ namespace TheBugTracker.Controllers
             }
 
             return RedirectToAction("Details", new { id = ticketAttachment.TicketId, message = statusMessage });
+        }
+
+        public async Task<IActionResult> ShowFile(int id)
+        {
+            TicketAttachment ticketAttachment = await _ticketService.GetTicketAttachmentByIdAsync(id);
+            string fileName = ticketAttachment.FileName;
+            byte[] fileData = ticketAttachment.FileData;
+            string ext = Path.GetExtension(fileName).Replace(".", "");
+
+            Response.Headers.Add("Content-Disposition", $"inline; filename={fileName}");
+            return File(fileData, $"application/{ext}");
         }
 
         // GET: Tickets/Archive/5
