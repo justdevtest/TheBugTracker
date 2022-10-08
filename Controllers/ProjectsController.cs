@@ -24,10 +24,10 @@ namespace TheBugTracker.Controllers
         private readonly IBTProjectService _projectService;
         private readonly UserManager<BTUser> _userManager;
 
-        public ProjectsController(ApplicationDbContext context, 
-                                  IBTRolesService rolesService, 
-                                  IBTLookupService lookupService, 
-                                  IBTFileService fileService, 
+        public ProjectsController(ApplicationDbContext context,
+                                  IBTRolesService rolesService,
+                                  IBTLookupService lookupService,
+                                  IBTFileService fileService,
                                   IBTProjectService projectService,
                                   UserManager<BTUser> userManager)
         {
@@ -64,6 +64,19 @@ namespace TheBugTracker.Controllers
             projects = await _projectService.GetUnassignedProjectsAsync(companyId);
 
             return View(projects);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AssignPM(int projectId)
+        {
+            int companyId = User.Identity.GetCompanyId().Value;
+            
+            AssignPMViewModel model = new();
+
+            model.Project = await _projectService.GetProjectByIdAsync(projectId, companyId);
+            model.PMList = new SelectList(await _rolesService.GetUsersInRoleAsync(nameof(Roles.ProjectManager), companyId), "Id", "FullName");
+
+            return View(model);
         }
 
         // GET: Projects/Details/5
