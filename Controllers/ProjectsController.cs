@@ -146,9 +146,13 @@ namespace TheBugTracker.Controllers
             }
 
             var project = await _context.Projects
-                .Include(p => p.Company)
-                .Include(p => p.ProjectPriority)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                                        .Include(p => p.Company)
+                                        .Include(p => p.ProjectPriority)
+                                        .Include(p => p.Tickets)
+                                            .ThenInclude(t => t.TicketStatus)
+                                        .Include(p => p.Tickets)
+                                            .ThenInclude(t => t.TicketPriority)
+                                        .FirstOrDefaultAsync(m => m.Id == id);
             if (project == null)
             {
                 return NotFound();
