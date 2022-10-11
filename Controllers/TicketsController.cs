@@ -25,13 +25,16 @@ namespace TheBugTracker.Controllers
         private readonly IBTLookupService _lookupService;
         private readonly IBTTicketService _ticketService;
         private readonly IBTFileService _fileService;
+        private readonly IBTTicketHistoryService _historyService;
+
 
         public TicketsController(ApplicationDbContext context,
                                  UserManager<BTUser> userManager,
                                  IBTProjectService projectService,
                                  IBTLookupService lookupService,
                                  IBTTicketService ticketService,
-                                 IBTFileService fileService)
+                                 IBTFileService fileService, 
+                                 IBTTicketHistoryService historyService)
         {
             _context = context;
             _userManager = userManager;
@@ -39,6 +42,7 @@ namespace TheBugTracker.Controllers
             _lookupService = lookupService;
             _ticketService = ticketService;
             _fileService = fileService;
+            _historyService = historyService;
         }
 
         // GET: Tickets
@@ -244,6 +248,9 @@ namespace TheBugTracker.Controllers
             {
                 BTUser btUser = await _userManager.GetUserAsync(User);
 
+                // Snapshot of ticket data before modification
+                Ticket oldTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id);
+
                 try
                 {
                     ticket.Updated = DateTimeOffset.Now;
@@ -261,7 +268,8 @@ namespace TheBugTracker.Controllers
                     }
                 }
 
-                // TODO: Add Ticket History
+                Ticket newTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id);
+                await _historyService.AddHistoryAsync(oldTicket, newTicket, btUser.Id);
 
                 return RedirectToAction(nameof(Index));
             }
