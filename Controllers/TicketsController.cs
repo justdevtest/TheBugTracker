@@ -183,16 +183,28 @@ namespace TheBugTracker.Controllers
         {
             BTUser btUser = await _userManager.GetUserAsync(User);
 
+
             if (ModelState.IsValid)
             {
-                ticket.Created = DateTimeOffset.Now;
-                ticket.OwnerUserId = btUser.Id;
-                ticket.TicketStatusId = (await _ticketService.LookupTicketStatusIdAsync(nameof(BTTicketStatus.New))).Value;
+                try
+                {
+                    ticket.Created = DateTimeOffset.Now;
+                    ticket.OwnerUserId = btUser.Id;
+                    ticket.TicketStatusId = (await _ticketService.LookupTicketStatusIdAsync(nameof(BTTicketStatus.New))).Value;
 
-                await _ticketService.AddNewTicketAsync(ticket);
+                    await _ticketService.AddNewTicketAsync(ticket);
 
-                // TODO: Ticket History
-                // TODO: Ticket Notification
+                    Ticket newTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id);
+                    await _historyService.AddHistoryAsync(null, newTicket, btUser.Id);
+
+                    // TODO: Ticket Notification
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+
                 return RedirectToAction(nameof(Index));
             }
 
