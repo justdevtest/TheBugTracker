@@ -41,7 +41,6 @@ namespace TheBugTracker.Controllers
             _companyInfoService = companyInfoService;
         }
 
-        // GET: MyProjects
         public async Task<IActionResult> MyProjects()
         {
             string userId = _userManager.GetUserId(User);
@@ -50,7 +49,6 @@ namespace TheBugTracker.Controllers
             return View(projects);
         }
 
-        // GET: AllProjects
         public async Task<IActionResult> AllProjects()
         {
             List<Project> projects = new();
@@ -68,6 +66,15 @@ namespace TheBugTracker.Controllers
 
             return View(projects);
         }
+
+        public async Task<IActionResult> ArchivedProjects()
+        {
+            int companyId = User.Identity.GetCompanyId().Value;
+            List<Project> projects = await _projectService.GetArchivedProjectsByCompany(companyId);
+
+            return View(projects);
+        }
+
 
 
         [Authorize(Roles = "Admin")]
