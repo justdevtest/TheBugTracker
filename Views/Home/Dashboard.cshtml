@@ -1,18 +1,32 @@
-﻿@{
+﻿@model TheBugTracker.Models.ViewModels.DashboardViewModel
+
+@using Microsoft.AspNetCore.Identity
+@using TheBugTracker.Services.Interfaces
+
+@inject UserManager<BTUser> UserManager
+@inject IBTRolesService RolesService
+
+
+@{
     ViewData["Title"] = "Dashboard";
-    @* Instantiate the btUser *@
+    BTUser btUser = await UserManager.GetUserAsync(User);
 }
 
 <h1>Dashboard</h1>
 <a href="javascript:void(0);">
-    @* User Info *@
-    [Code: Copy from Ticket/Details]
+    @if (btUser?.AvatarFileData != null)
+    {
+        <img class="media-object" src="data:image/*;base64,@(Convert.ToBase64String(Model.DeveloperUser.AvatarFileData))" alt="" style="width:30px;height:30px;" />
+    }
+    else
+    {
+        <img class="media-object" src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" alt="" style="width:30px;height:30px;" />
+    }
 </a>
-@* Get The btUser FullName *@
-<strong>[User's FullName]</strong>
+
+<strong>@btUser.FullName</strong>
 <span class="text-muted" style="font-size:x-small;">
-    @* Company Name *@
-    <strong>[Show CompanyName]</strong>
+    <strong>@Model.Company.Name</strong>
 </span>
 
 
@@ -78,6 +92,34 @@
                         <div class="card-body">
 
                             @* [Copy and format table from Unassigned Tickets] *@
+                            <div class="table-responsive" style="overflow-y:auto;height:600px;">
+                                <table class="table table-hover">
+                                    <thead class="">
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>StartDate</th>
+                                            <th>EndDate</th>
+                                            <th>Priority</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var project in Model.Projects.OrderByDescending(d => d.EndDate))
+                                        {
+                                            <tr>
+                                                <td><a asp-action="Details" asp-controller="Projects" asp-route-id="@project.Id" style="color:black"><strong>@project.Name</strong></a></td>
+                                                <td><span style="font-size:small">@project.StartDate.ToString("MMM dd, yyyy")</span></td>
+                                                <td><span style="font-size:small">@project.EndDate.ToString("MMM dd, yyyy")</span></td>
+                                                <td><span class="badge bg-dark">@project.ProjectPriority?.Name</span></td>
+                                                <td>
+                                                    <a class="btn btn-sm btn-outline-secondary" asp-action="Details" asp-controller="Projects" asp-route-id="@project.Id"><i class="fs-5 bi-justify"></i></a>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+
 
                         </div>
                         <div class="card-footer">
@@ -96,6 +138,52 @@
                         <div class="card-body">
 
                             @* Copy and format table from Unassigned Tickets *@
+                            <div class="table-responsive" style="overflow-y:auto;height:600px;">
+                                <table class="table table-hover">
+                                    <thead class="">
+                                        <tr>
+                                            <th>Title</th>
+                                            <th>Developer</th>
+                                            <th>Status</th>
+                                            <th>Priority</th>
+                                            <th>Date</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var ticket in Model.Tickets.OrderByDescending(d => d.Created))
+                                        {
+                                            <tr>
+                                                <td><a asp-action="Details" asp-controller="Tickets" asp-route-id="@ticket.Id" style="color:black"><strong>@ticket.Title</strong></a></td>
+                                                <td>
+                                                    @if (ticket.DeveloperUserId != null)
+                                                    {
+                                                        @ticket.DeveloperUser?.FullName;
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="badge bg-warning text-dark">Unassigned </span>
+                                                    }
+                                                </td>
+                                                @if (ticket.TicketStatus.Name == "New")
+                                                {
+                                                    <td><span class="badge bg-success rounded-pill">@ticket.TicketStatus.Name </span></td>
+                                                }
+                                                else
+                                                {
+                                                    <td><span class="badge bg-secondary rounded-pill">@ticket.TicketStatus.Name </span></td>
+                                                }
+                                                <td><span class="badge bg-dark">@ticket.TicketPriority.Name </span></td>
+                                                <td style="font-size:small">@ticket.Created.ToString("MMM dd, yyyy")</td>
+                                                <td>
+                                                    <a class="btn btn-sm btn-outline-secondary" asp-action="Details" asp-controller="Tickets" asp-route-id="@ticket.Id"><i class="fs-5 bi-justify"></i></a>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+
 
                         </div>
                         <div class="card-footer">
@@ -111,14 +199,20 @@
                             <hr />
                         </div>
                         <div class="card-body" style="overflow-y:auto;height:600px;background-color:antiquewhite">
+                            @foreach (BTUser member in Model.Members)
+                            {
+                                <div class="">
 
-                            @* Looop over Company members. Display Name and Role *@
+                                    <span style="font-weight:bold">@member.FullName</span>
+                                    <h6>@((await RolesService.GetUserRolesAsync(member)).FirstOrDefault())</h6>
+
+                                </div>
+                            }
 
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
-</div>
+</div>  
