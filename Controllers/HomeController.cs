@@ -7,7 +7,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using TheBugTracker.Extensions;
 using TheBugTracker.Models;
+using TheBugTracker.Models.Enums;
 using TheBugTracker.Models.ViewModels;
+using TheBugTracker.Services;
 using TheBugTracker.Services.Interfaces;
 
 namespace TheBugTracker.Controllers
@@ -15,12 +17,14 @@ namespace TheBugTracker.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IBTProjectService _projectService;
         private readonly IBTCompanyInfoService _companyInfoService;
 
-        public HomeController(ILogger<HomeController> logger, IBTCompanyInfoService companyInfoService)
+        public HomeController(ILogger<HomeController> logger, IBTCompanyInfoService companyInfoService, IBTProjectService projectService)
         {
             _logger = logger;
             _companyInfoService = companyInfoService;
+            _projectService = projectService;
         }
 
         public IActionResult Index()
@@ -42,6 +46,44 @@ namespace TheBugTracker.Controllers
 
         }
 
+        [HttpPost]
+        public async Task<JsonResult> GglProjectTickets()
+        {
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            List<Project> projects = await _projectService.GetAllProjectsByCompany(companyId);
+
+            List<object> chartData = new();
+            chartData.Add(new object[] { "ProjectName", "TicketCount" });
+
+            foreach (Project prj in projects)
+            {
+                chartData.Add(new object[] { prj.Name, prj.Tickets.Count() });
+            }
+
+            return Json(chartData);
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> GglProjectPriority()
+        {
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            List<Project> projects = await _projectService.GetAllProjectsByCompany(companyId);
+
+            List<object> chartData = new();
+            chartData.Add(new object[] { "Priority", "Count" });
+
+
+            foreach (string priority in Enum.GetNames(typeof(BTProjectPriority)))
+            {
+                int priorityCount = (await _projectService.GetAllProjectsByPriority(companyId, priority)).Count();
+                chartData.Add(new object[] { priority, priorityCount });
+            }
+
+            return Json(chartData);
+        }
+
         public IActionResult Privacy()
         {
             return View();
@@ -52,5 +94,6 @@ namespace TheBugTracker.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
     }
 }
