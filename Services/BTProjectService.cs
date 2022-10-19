@@ -39,7 +39,7 @@ namespace TheBugTracker.Services
                 {
                     await RemoveProjectManagerAsync(projectId);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Console.WriteLine($"***** Error ***** - Error Removing Current Project Manager - {ex.Message}");
                     return false;
@@ -205,12 +205,29 @@ namespace TheBugTracker.Services
 
         public async Task<Project> GetProjectByIdAsync(int projectId, int companyId)
         {
-            Project project = await _context.Projects
-                                            .Include(p => p.Tickets)
-                                            .Include(p => p.Members)
-                                            .Include(p => p.ProjectPriority)
-                                            .FirstOrDefaultAsync(p => p.Id == projectId && p.CompanyId == companyId);
-            return project;
+            try
+            {
+                Project project = await _context.Projects
+                                        .Include(p => p.Tickets)
+                                            .ThenInclude(t => t.TicketStatus)
+                                        .Include(p => p.Tickets)
+                                            .ThenInclude(t => t.TicketPriority)
+                                        .Include(p => p.Tickets)
+                                            .ThenInclude(t => t.TicketType)
+                                        .Include(p => p.Tickets)
+                                            .ThenInclude(t => t.DeveloperUser)
+                                        .Include(p => p.Tickets)
+                                            .ThenInclude(t => t.OwnerUser)
+                                        .Include(p => p.Members)
+                                        .Include(p => p.ProjectPriority)
+                                        .FirstOrDefaultAsync(p => p.Id == projectId && p.CompanyId == companyId);
+                return project;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         public async Task<BTUser> GetProjectManagerAsync(int projectId)
@@ -218,7 +235,7 @@ namespace TheBugTracker.Services
             Project project = await _context.Projects
                                             .Include(p => p.Members)
                                             .FirstOrDefaultAsync(p => p.Id == projectId);
-            
+
             foreach (BTUser member in project?.Members)
             {
                 if (await _rolesService.IsUserInRoleAsync(member, Roles.ProjectManager.ToString()))
@@ -263,7 +280,7 @@ namespace TheBugTracker.Services
                 projects = await _context.Projects
                                          .Include(p => p.ProjectPriority)
                                          .Where(p => p.CompanyId == compayId).ToListAsync();
-                
+
                 foreach (Project project in projects)
                 {
                     if ((await GetProjectMembersByRoleAsync(project.Id, nameof(Roles.ProjectManager))).Count == 0)
@@ -375,7 +392,7 @@ namespace TheBugTracker.Services
                                             .FirstOrDefaultAsync(p => p.Id == projectId);
             try
             {
-                foreach(BTUser member in project?.Members)
+                foreach (BTUser member in project?.Members)
                 {
                     if (await _rolesService.IsUserInRoleAsync(member, Roles.ProjectManager.ToString()))
                     {
